@@ -1,6 +1,6 @@
 /**
  * @file separate the utils and setup processes from the application logic.
- * @version 0.0.1
+ * @version 0.0.1.1
  */
 
 /** Configuration and settings. */
@@ -52,4 +52,18 @@ function quit(exitCode) {
   FileSystem = null;
   CollectGarbage();
   Environment.Exit(exitCode);
+}
+
+/**
+ * Request administrator privileges if standard user.
+ * @param {String[]} args are the input arguments.
+ */
+function RequestAdminPrivileges(args) {
+  var HKU = 0x80000003;
+  if (StdRegProv.CheckAccess(HKU, 'S-1-5-19\\Environment')) {
+    return;
+  }
+  var WINDOW_STYLE_HIDDEN = 0;
+  Shell.ShellExecute(AssemblyLocation, format('"{0}"', args.join('" "')), null, 'runas', WINDOW_STYLE_HIDDEN);
+  quit(0);
 }

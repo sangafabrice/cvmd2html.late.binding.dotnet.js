@@ -1,6 +1,6 @@
 /**
  * @file WMI classes as inspired by mgmclassgen.exe.
- * @version 0.0.1
+ * @version 0.0.1.1
  */
 
 package ROOT.CIMV2.WIN32 {
@@ -39,15 +39,12 @@ package ROOT.CIMV2.WIN32 {
     /**
      * Wait for the cmd process exit.
      * @param {number} ProcessId is the process identifier.
+     * @returns {number} the exit status.
      */
-    static function WaitForExit(ProcessId: uint) {
-      var wmiService: SWbemServices = (new SWbemLocatorClass()).ConnectServer();
-      var monikerPath: String = 'Win32_Process.Handle=' + ProcessId;
-      try {
-        while (wmiService.Get(monikerPath).Properties_.Item('Name') == 'cmd.exe') { }
-      } catch (error) { }
-      Marshal.FinalReleaseComObject(wmiService);
-      wmiService = null;
+    static function WaitForExit(ProcessId: uint): uint {
+      // The process termination event query.
+      var wmiQuery = 'SELECT * FROM Win32_ProcessStopTrace WHERE ProcessName="cmd.exe" AND ProcessId=' + ProcessId;
+      return (new SWbemLocatorClass()).ConnectServer().ExecNotificationQuery(wmiQuery).NextEvent().Properties_.Item('ExitStatus').Value;
     }
   }
 
