@@ -24,7 +24,7 @@ var Package = (function() {
   };
   resource.ResourcePath = FileSystem.BuildPath(resource.Root, 'rsc');
   resource.PwshScriptPath = FileSystem.BuildPath(resource.ResourcePath, 'cvmd2html.ps1');
-  resource.MenuIconPath = FileSystem.BuildPath(resource.ResourcePath, 'menu.ico');
+  resource.MenuIconPath = AssemblyLocation;
   resource.PwshExePath = StdRegProv.GetStringValue(null, 'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\pwsh.exe', null);
   resource.IconLink = {
     DirName: WshShell.ExpandEnvironmentStrings('%TEMP%'),

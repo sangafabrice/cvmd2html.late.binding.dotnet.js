@@ -1,6 +1,6 @@
 /**
  * @file WMI classes as inspired by mgmclassgen.exe.
- * @version 0.0.1
+ * @version 0.0.1.1
  */
 
 package ROOT.CIMV2.WIN32 {
@@ -37,15 +37,19 @@ package ROOT.CIMV2.WIN32 {
     }
 
     /**
-     * Wait for the cmd process exit.
-     * @param {number} ProcessId is the process identifier.
+     * Wait for the child process exit.
+     * @param {number} ParentProcessId is the parent process identifier.
      */
-    static function WaitForExit(ProcessId: uint) {
+    static function WaitForChildExit(ParentProcessId: uint) {
       var wmiService: SWbemServices = (new SWbemLocatorClass()).ConnectServer();
-      var monikerPath: String = 'Win32_Process.Handle=' + ProcessId;
-      try {
-        while (wmiService.Get(monikerPath).Properties_.Item('Name') == 'cmd.exe') { }
-      } catch (error) { }
+      var wmiQuery: String = 'SELECT * FROM Win32_Process WHERE Name="pwsh.exe" AND ParentProcessId=' + ParentProcessId;
+      var getProcess = function() {
+        return (new Enumerator(wmiService.ExecQuery(wmiQuery))).item();
+      }
+      // Wait for the process to start.
+      while (getProcess() == null) { }
+      // Wait for the process to exit.
+      while (getProcess() != null) { }
       Marshal.FinalReleaseComObject(wmiService);
       wmiService = null;
     }
