@@ -31,14 +31,11 @@ package ROOT.CIMV2.WIN32 {
     /// <summary>Wait for the child process exit.</summary>
     /// <param name="ParentProcessId">The parent process identifier.</param>
     static function WaitForChildExit(ParentProcessId: uint) {
-      var wmiQuery = 'SELECT * FROM Win32_Process WHERE Name="pwsh.exe" AND ParentProcessId=' + ParentProcessId;
-      var getProcessCount = function() {
-        return (new ManagementObjectSearcher(wmiQuery)).Get().Count;
-      }
-      // Wait for the process to start.
-      while (getProcessCount() == 0) { }
+      // The process termination event query.
+      // Select the process whose parent is the intermediate process used for executing the link.
+      var wmiQuery = 'SELECT * FROM __InstanceDeletionEvent WITHIN 0.1 WHERE TargetInstance ISA "Win32_Process" AND TargetInstance.Name="pwsh.exe" AND TargetInstance.ParentProcessId=' + ParentProcessId;
       // Wait for the process to exit.
-      while (getProcessCount()) { }
+      (new ManagementEventWatcher(wmiQuery)).WaitForNextEvent();
     }
   }
 
