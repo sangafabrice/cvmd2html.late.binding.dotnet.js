@@ -16,9 +16,9 @@ package cvmd2html {
   
     private static var _pwshScriptPath: String = Path.Combine(_resourcePath, 'cvmd2html.ps1');
   
-    private static var _pwshExePath: String = StdRegProv.GetStringValue(null, 'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\pwsh.exe', null);
+    private static var _pwshExePath: String = Registry.GetValue('HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\pwsh.exe', null, null);
   
-    private static var _menuIconPath: String = Path.Combine(_resourcePath, 'menu.ico');
+    private static var _menuIconPath: String = Program.Path;
   
     /// <summary>The shortcut target powershell script path.</summary>
     static function get PwshScriptPath(): String {
@@ -54,10 +54,11 @@ package cvmd2html {
       /// <summary>Create the custom icon link file.</summary>
       /// <param name="markdownPath">The input markdown file path.</param>
       static function Create(markdownPath): String {
-        var link: WshShortcut = (new WshShellClass()).CreateShortcut(_path);
-        link.TargetPath = Package.PwshExePath;
+        File.Create(_path).Close();
+        var link: ShellLinkObject = (new ShellClass()).NameSpace(_dirName).ParseName(_name).GetLink;
+        link.Path = Package.PwshExePath;
         link.Arguments = String.Format('-ep Bypass -nop -w Hidden -f "{0}" -Markdown "{1}"', Package.PwshScriptPath, markdownPath);
-        link.IconLocation = Package.MenuIconPath;
+        link.SetIconLocation(Package.MenuIconPath, 0);
         link.Save();
         Marshal.FinalReleaseComObject(link);
         link = null;
