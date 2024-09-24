@@ -9,6 +9,7 @@ import System;
 import System.Reflection;
 import System.Reflection.Emit;
 import IWshRuntimeLibrary;
+import mshtml;
 import ROOT.CIMV2;
 
 var AssemblyLocation = Assembly.GetExecutingAssembly().Location;

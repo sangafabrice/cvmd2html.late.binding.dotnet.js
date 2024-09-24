@@ -6,6 +6,6 @@
 
 /** The application execution. */
 if (Param.Markdown) {
-  CreateConsoleHost(Package.PwshExePath, Package.PwshScriptPath).StartWith(Param.Markdown);
+  CreateConverter(Package.HtmlLibraryPath, Package.JsLibraryPath).ConvertFrom(Param.Markdown);
   quit(0);
 }

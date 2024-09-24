@@ -26,13 +26,13 @@ Param ()
   }
   New-Item $BinDir -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
   Copy-Item "$PSScriptRoot\rsc" -Destination $BinDir -Recurse
-  Copy-Item "$PSScriptRoot\cvmd2html.psd1" -Destination $BinDir
   
   $SrcDir = "$PSScriptRoot\src"
   $AssemblyInfoJS = "$SrcDir\AssemblyInfo.js"
   $ResFileRc = "$PSScriptRoot\resource.rc"
 
   # Import the dependency libraries.
+  Copy-Item $(C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -command '[System.Reflection.Assembly]::LoadWithPartialName("Microsoft.mshtml").Location') -Destination ($MshtmlDllPath = "$BinDir\Microsoft.mshtml.dll") -Force
   & "$PSScriptRoot\TlbImp.exe" /nologo /silent 'C:\Windows\System32\wbem\wbemdisp.tlb' /out:$(($SWbemDllPath = "$BinDir\Interop.WbemScripting.dll")) /namespace:WbemScripting
   & "$PSScriptRoot\TlbImp.exe" /nologo /silent 'C:\Windows\System32\wshom.ocx'  /out:$(($WshDllPath = "$BinDir\Interop.IWshRuntimeLibrary.dll")) /namespace:IWshRuntimeLibrary
 
@@ -44,7 +44,7 @@ Param ()
   $EnvPath = $Env:Path
   $Env:Path = "$Env:windir\Microsoft.NET\Framework$(If ([Environment]::Is64BitOperatingSystem) { '64' })\v4.0.30319\;$Env:Path"
   jsc.exe /nologo /target:library /win32res:$RegistryResFile /reference:$SWbemDllPath /out:$(($StdRegProvDll = "$BinDir\StdRegProv.dll")) /define:StdRegProvWim $AssemblyInfoJS "$SrcDir\StdRegProv.js"
-  jsc.exe /nologo /target:$($DebugPreference -eq 'Continue' ? 'exe':'winexe') /win32res:$ResFile /reference:$StdRegProvDll /reference:$WshDllPath /reference:$SWbemDllPath /out:$(($ConvertExe = "$BinDir\cvmd2html.exe")) $AssemblyInfoJS "$SrcDir\conhost.js" "$SrcDir\msgbox.js" "$SrcDir\package.js" "$SrcDir\parameters.js" "$PSScriptRoot\index.js" "$SrcDir\setup.js" "$SrcDir\utils.js"
+  jsc.exe /nologo /target:$($DebugPreference -eq 'Continue' ? 'exe':'winexe') /win32res:$ResFile /reference:$StdRegProvDll /reference:$WshDllPath /reference:$SWbemDllPath /reference:$MshtmlDllPath /out:$(($ConvertExe = "$BinDir\cvmd2html.exe")) $AssemblyInfoJS "$SrcDir\converter.js" "$SrcDir\msgbox.js" "$SrcDir\package.js" "$SrcDir\parameters.js" "$PSScriptRoot\index.js" "$SrcDir\setup.js" "$SrcDir\utils.js"
   $Env:Path = $EnvPath
   
   If ($LASTEXITCODE -eq 0) {
