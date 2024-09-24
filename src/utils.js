@@ -1,6 +1,6 @@
 /**
  * @file separate the utils and setup processes from the application logic.
- * @version 0.0.1
+ * @version 0.0.1.1
  */
 
 /** Configuration and settings. */
@@ -36,15 +36,18 @@ function format(formatStr, args) {
  * @param {number} exitCode .
  */
 function quit(exitCode) {
-  try {    
-    Package.Dispose();
-  } catch (error) { }
-  try {    
-    ErrorLog.Dispose();
-  } catch (error) { }
-  try {    
-    Setup.Dispose();
-  } catch (error) { }
+  Marshal.FinalReleaseComObject(FileSystem);
+  Marshal.FinalReleaseComObject(WshShell);
+  Marshal.FinalReleaseComObject(Scriptlet);
+  Marshal.FinalReleaseComObject(Shell);
+  Marshal.FinalReleaseComObject(StdRegProv);
+  Marshal.FinalReleaseComObject(SWbemService);
+  SWbemService = null;
+  StdRegProv = null;
+  Shell = null;
+  Scriptlet = null;
+  WshShell = null;
+  FileSystem = null;
   CollectGarbage();
   Environment.Exit(exitCode);
 }

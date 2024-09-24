@@ -1,15 +1,15 @@
 /**
  * @file Launches the shortcut target PowerShell script with the selected markdown as an argument.
  * It aims to eliminate the flashing console window when the user clicks on the shortcut menu.
- * @version 0.0.1.4
+ * @version 0.0.1.6
  */
 
 /** The application execution. */
 if (Param.Markdown) {
   var WINDOW_STYLE_HIDDEN = 0xC;
-  var startInfo = GetObject('winmgmts:Win32_ProcessStartup').SpawnInstance_();
+  var startInfo = SWbemService.Get('Win32_ProcessStartup').SpawnInstance_();
   startInfo.ShowWindow = WINDOW_STYLE_HIDDEN;
-  var processService = GetObject('winmgmts:Win32_Process');
+  var processService = SWbemService.Get('Win32_Process');
   var createMethod = processService.Methods_.Item('Create');
   var inParam = createMethod.InParameters.SpawnInstance_();
   inParam.CommandLine = format('C:\\Windows\\System32\\cmd.exe /d /c ""{0}" 2> "{1}""', [Package.IconLink.Path, ErrorLog.Path]);
@@ -39,5 +39,5 @@ function waitForChildExit(parentProcessId) {
   // Select the process whose parent is the intermediate process used for executing the link.
   var wmiQuery = 'SELECT * FROM __InstanceDeletionEvent WITHIN 0.1 WHERE TargetInstance ISA "Win32_Process" AND TargetInstance.Name="pwsh.exe" AND TargetInstance.ParentProcessId=' + parentProcessId;
   // Wait for the process to exit.
-  GetObject('winmgmts:').ExecNotificationQuery(wmiQuery).NextEvent();
+  SWbemService.ExecNotificationQuery(wmiQuery).NextEvent();
 }
