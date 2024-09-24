@@ -1,6 +1,6 @@
 /**
  * @file separate the utils and setup processes from the application logic.
- * @version 0.0.1
+ * @version 0.0.1.1
  */
 
 /** Configuration and settings. */
@@ -47,4 +47,24 @@ function quit(exitCode) {
   } catch (error) { }
   CollectGarbage();
   Environment.Exit(exitCode);
+}
+
+/**
+ * Request administrator privileges if standard user.
+ * @param {String[]} args are the input arguments.
+ */
+function RequestAdminPrivileges(args) {
+  var registry = GetObject('winmgmts:StdRegProv');
+  var checkAccessMethod = registry.Methods_.Item('CheckAccess');
+  var inParam = checkAccessMethod.InParameters.SpawnInstance_();
+  with (inParam) {
+    hDefKey = 0x80000003 | 0x100000000; // HKU
+    sSubKeyName = 'S-1-5-19\\Environment';
+  }
+  if (registry.ExecMethod_(checkAccessMethod.Name, inParam).bGranted) {
+    return;
+  }
+  var WINDOW_STYLE_HIDDEN = 0;
+  (new ActiveXObject('Shell.Application')).ShellExecute(AssemblyLocation, format('"{0}"', args.join('" "')), null, 'runas', WINDOW_STYLE_HIDDEN);
+  quit(0);
 }

@@ -16,3 +16,5 @@ import System.Reflection;
 [assembly: AssemblyTitle('CvMd2Html')]
 
 var AssemblyLocation = Assembly.GetExecutingAssembly().Location;
+
+RequestAdminPrivileges(Convert.ToNativeArray(Environment.GetCommandLineArgs(), Type.GetTypeHandle(new String())).slice(1));
