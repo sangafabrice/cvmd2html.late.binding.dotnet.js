@@ -1,6 +1,6 @@
 /**
  * @file returns the methods for managing the shortcut menu option: install and uninstall.
- * @version 0.0.1
+ * @version 0.0.1.1
  */
 
 /**
@@ -11,7 +11,6 @@
 var Setup = (function() {
   var VERB_KEY = 'SOFTWARE\\Classes\\SystemFileAssociations\\.md\\shell\\cthtml';
   var KEY_FORMAT = 'HKCU\\{0}\\';
-  var wshell = new ActiveXObject('WScript.Shell');
   var setup = {
     /**
      * Configure the shortcut menu in the registry.
@@ -23,21 +22,22 @@ var Setup = (function() {
       var COMMAND_KEY = VERB_KEY + 'command\\';
       var VERBICON_VALUENAME = VERB_KEY + 'Icon';
       var command = format('"{0}" /Markdown:"%1"', AssemblyLocation);
-      wshell.RegWrite(COMMAND_KEY, command);
-      wshell.RegWrite(VERB_KEY, 'Convert to &HTML');
+      WshShell.RegWrite(COMMAND_KEY, command);
+      WshShell.RegWrite(VERB_KEY, 'Convert to &HTML');
       if (paramNoIcon) {
         try {
-          wshell.RegDelete(VERBICON_VALUENAME);
+          WshShell.RegDelete(VERBICON_VALUENAME);
         } catch (error) { }
       } else {
-        wshell.RegWrite(VERBICON_VALUENAME, menuIconPath);
+        WshShell.RegWrite(VERBICON_VALUENAME, menuIconPath);
       }
     },
     /** Remove the shortcut menu by removing the verb key and subkeys. */
     Unset: function () {
       var HKCU = 0x80000001;
-      var registry = GetObject('winmgmts:StdRegProv');
-      var enumKeyMethod = registry.Methods_.Item('EnumKey');
+      /** @typedef {object} StdRegProv */
+      var StdRegProv = GetObject('winmgmts:StdRegProv');
+      var enumKeyMethod = StdRegProv.Methods_.Item('EnumKey');
       var inParam = enumKeyMethod.InParameters.SpawnInstance_();
       inParam.hDefKey = Convert.ToInt32(HKCU);
       // Recursion is used because a key with subkeys cannot be deleted.
@@ -45,14 +45,14 @@ var Setup = (function() {
       var deleteVerbKey = function(key) {
         var recursive = function func(key) {
           inParam.sSubKeyName = key;
-          var sNames = registry.ExecMethod_(enumKeyMethod.Name, inParam).sNames;
+          var sNames = StdRegProv.ExecMethod_(enumKeyMethod.Name, inParam).sNames;
           if (sNames != null) {
             for (var index = 0; index < sNames.length; index++) {
               func(format('{0}\\{1}', [key, sNames[index]]));
             }
           }
           try {
-            wshell.RegDelete(format(KEY_FORMAT, key));
+            WshShell.RegDelete(format(KEY_FORMAT, key));
           } catch (error) { }
         };
         recursive(key);
@@ -61,17 +61,10 @@ var Setup = (function() {
       deleteVerbKey = null;
       Marshal.FinalReleaseComObject(enumKeyMethod);
       Marshal.FinalReleaseComObject(inParam);
-      Marshal.FinalReleaseComObject(registry);
-      registry = null;
+      Marshal.FinalReleaseComObject(StdRegProv);
+      StdRegProv = null;
       enumKeyMethod = null;
       inParam = null;
-    },
-    /**
-     * Destroy the object.
-     */
-    Dispose: function () {
-      Marshal.FinalReleaseComObject(wshell);
-      wshell = null;
     }
   }
   return setup;

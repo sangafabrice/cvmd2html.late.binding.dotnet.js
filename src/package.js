@@ -19,34 +19,23 @@
 
 /** @class */
 var Package = (function() {
-  var fs = new ActiveXObject('Scripting.FileSystemObject');
-  var wshell = new ActiveXObject('WScript.Shell');
   var resource = {
-    Root: fs.GetParentFolderName(AssemblyLocation),
-    /**
-     * Destroy the object.
-     */
-    Dispose: function () {
-      Marshal.FinalReleaseComObject(wshell);
-      Marshal.FinalReleaseComObject(fs);
-      fs = null;
-      wshell = null;
-    }
+    Root: FileSystem.GetParentFolderName(AssemblyLocation)
   };
-  resource.ResourcePath = fs.BuildPath(resource.Root, 'rsc');
-  resource.PwshScriptPath = fs.BuildPath(resource.ResourcePath, 'cvmd2html.ps1');
+  resource.ResourcePath = FileSystem.BuildPath(resource.Root, 'rsc');
+  resource.PwshScriptPath = FileSystem.BuildPath(resource.ResourcePath, 'cvmd2html.ps1');
   resource.MenuIconPath = AssemblyLocation;
-  resource.PwshExePath = wshell.RegRead('HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\pwsh.exe\\');
+  resource.PwshExePath = WshShell.RegRead('HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\pwsh.exe\\');
   resource.IconLink = {
-    DirName: wshell.ExpandEnvironmentStrings('%TEMP%'),
-    Name: (new ActiveXObject('Scriptlet.TypeLib')).Guid.substr(1, 36).toLowerCase() + '.tmp.lnk',
+    DirName: WshShell.ExpandEnvironmentStrings('%TEMP%'),
+    Name: Scriptlet.Guid.substr(1, 36).toLowerCase() + '.tmp.lnk',
     /**
      * Create the custom icon link file.
      * @method @memberof resource.IconLink
      * @param {string} markdownPath is the input markdown file path.
      */
     Create: function (markdownPath) {
-      var link = wshell.CreateShortcut(this.Path);
+      var link = WshShell.CreateShortcut(this.Path);
       link.TargetPath = resource.PwshExePath;
       link.Arguments = format('-ep Bypass -nop -w Hidden -f "{0}" -Markdown "{1}"', [resource.PwshScriptPath, markdownPath]);
       link.IconLocation = resource.MenuIconPath;
@@ -60,10 +49,10 @@ var Package = (function() {
      */
     Delete: function () {
       try {
-        fs.DeleteFile(this.Path);
+        FileSystem.DeleteFile(this.Path);
       } catch (error) { }
     }
   }
-  resource.IconLink.Path = fs.BuildPath(resource.IconLink.DirName, resource.IconLink.Name);
+  resource.IconLink.Path = FileSystem.BuildPath(resource.IconLink.DirName, resource.IconLink.Name);
   return resource;
 })();
