@@ -1,6 +1,6 @@
 /**
  * @file returns the methods for managing the shortcut menu option: install and uninstall.
- * @version 0.0.1
+ * @version 0.0.1.1
  */
 
 /**
@@ -9,6 +9,7 @@
 
 /** @class */
 var Setup = (function() {
+  var HKCU = 0x80000001;
   var VERB_KEY = 'SOFTWARE\\Classes\\SystemFileAssociations\\.md\\shell\\cthtml';
   var setup = {
     /**
@@ -17,23 +18,20 @@ var Setup = (function() {
      * @param {string} menuIconPath is the shortcut menu icon file path.
      */
     Set: function (paramNoIcon, menuIconPath) {
-      var pVERB_KEY = format('HKCU\\{0}\\', VERB_KEY);
-      var COMMAND_KEY = pVERB_KEY + 'command\\';
-      var VERBICON_VALUENAME = pVERB_KEY + 'Icon';
+      var COMMAND_KEY = VERB_KEY + '\\command';
       var command = format('"{0}" /Markdown:"%1"', AssemblyLocation);
-      WshShell.RegWrite(COMMAND_KEY, command);
-      WshShell.RegWrite(pVERB_KEY, 'Convert to &HTML');
+      StdRegProv.CreateKey(HKCU, COMMAND_KEY);
+      StdRegProv.SetStringValue(HKCU, COMMAND_KEY, null, command);
+      StdRegProv.SetStringValue(HKCU, VERB_KEY, null, 'Convert to &HTML');
+      var iconValueName = 'Icon';
       if (paramNoIcon) {
-        try {
-          WshShell.RegDelete(VERBICON_VALUENAME);
-        } catch (error) { }
+        StdRegProv.DeleteValue(HKCU, VERB_KEY, iconValueName);
       } else {
-        WshShell.RegWrite(VERBICON_VALUENAME, menuIconPath);
+        StdRegProv.SetStringValue(HKCU, VERB_KEY, iconValueName, menuIconPath);
       }
     },
     /** Remove the shortcut menu by removing the verb key and subkeys. */
     Unset: function () {
-      var HKCU = 0x80000001;
       StdRegProv.DeleteKeyTree(HKCU, VERB_KEY);
     }
   }
