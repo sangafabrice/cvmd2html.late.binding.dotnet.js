@@ -39,6 +39,8 @@ function quit(exitCode) {
   Marshal.FinalReleaseComObject(FileSystem);
   Marshal.FinalReleaseComObject(WshShell);
   Marshal.FinalReleaseComObject(Scriptlet);
+  Marshal.FinalReleaseComObject(StdRegProv);
+  StdRegProv = null;
   Scriptlet = null;
   WshShell = null;
   FileSystem = null;
