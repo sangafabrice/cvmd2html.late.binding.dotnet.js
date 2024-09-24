@@ -1,4 +1,4 @@
 *.exe
 *.lnk
 bin/**
-test.*
+test*

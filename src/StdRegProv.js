@@ -98,4 +98,17 @@ package ROOT.CIMV2 {
       return (returnValue += DeleteKey(hDefKey, sSubKeyName));
     }
   }
+
+  internal abstract class Util {
+
+    /// <summary>Get the name of the method calling this method.</summary>
+    /// <remarks>
+    /// The method should initialize the stackTrace variable in its scope
+    /// before calling GetMethodName. So avoid GetMethodName(new stackTrace()).
+    /// </remarks>
+    /// <param name="stackTrace">The stack trace from the calling method.</param>
+    static function GetMethodName(stackTrace: StackTrace): String {
+      return stackTrace.GetFrame(0).GetMethod().Name;
+    }
+  }
 }
