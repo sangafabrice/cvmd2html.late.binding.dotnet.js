@@ -6,6 +6,6 @@
 
 /** The application execution. */
 if (Param.Markdown) {
-  CreateConverter(Package.JsLibraryPath).ConvertFrom(Param.Markdown);
+  CreateConverter(Package.HtmlLibraryPath, Package.JsLibraryPath).ConvertFrom(Param.Markdown);
   quit(0);
 }
