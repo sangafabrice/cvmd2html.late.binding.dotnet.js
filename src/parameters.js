@@ -1,6 +1,6 @@
 /**
  * @file returns the parsed parameters.
- * @version 0.0.1
+ * @version 0.0.1.1
  */
 
 /**
@@ -40,6 +40,10 @@ var Param = (function (args) {
       case '/unset':
         return {
           Unset: true
+        }
+      default:
+        return {
+          Markdown: arg
         }
     }
   } else if (args.length == 1) {
