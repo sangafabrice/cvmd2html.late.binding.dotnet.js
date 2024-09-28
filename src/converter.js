@@ -1,6 +1,6 @@
 /**
  * @file returns the method to convert from markdown to html.
- * @version 0.0.1.2
+ * @version 0.0.1.5
  */
 
 /**
@@ -48,7 +48,7 @@ var CreateConverter = (function() {
       // Build the HTML document that will load the showdown.js library.
       var document = new HTMLDocumentClass();
       document.open();
-      document.IHTMLDocument2_write(format(GetContent(htmlLibraryPath), GetContent(jsLibraryPath)));
+      document.IHTMLDocument2_write(GetBytes(format(GetContent(htmlLibraryPath), GetContent(jsLibraryPath))));
       document.close();
       document.body.innerText = markdownContent;
       document.parentWindow.execScript('convertMarkdown()', 'javascript');
@@ -58,6 +58,35 @@ var CreateConverter = (function() {
         if (document) {
           Marshal.FinalReleaseComObject(document);
           document = null;
+        }
+      }
+    }
+
+    /**
+     * Convert a text string to a unicode encoded string.
+     * @param {string} content is the text to convert.
+     * @returns {string} a byte encoded string.
+     */
+    function GetBytes(content) {
+      var stream = new StreamClass();
+      var TEXT_TYPE = 2;
+      var READWRITE_MODE = 3;
+      var BYTE_MODE = 1;
+      // Write content in text mode.
+      stream.Type = TEXT_TYPE;
+      stream.Mode = READWRITE_MODE;
+      stream.Open();
+      stream.WriteText(content);
+      // Start reading from the first byte.
+      stream.Position = 0;
+      stream.Type = BYTE_MODE;
+      try {
+          return stream.Read();
+      } finally {
+        if (stream) {
+          stream.Close();
+          Marshal.FinalReleaseComObject(stream);
+          stream = null;
         }
       }
     }
