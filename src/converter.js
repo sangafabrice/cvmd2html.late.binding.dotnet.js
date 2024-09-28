@@ -46,9 +46,13 @@ var CreateConverter = (function() {
      */
     function ConvertToHtml(markdownContent) {
       // Build the HTML document that will load the showdown.js library.
-      var document = new ActiveXObject('htmlFile');
+      with (new WebBrowser()) {
+        ScriptErrorsSuppressed = true;
+        Navigate('about:blank');
+        var document = Document.DomDocument;
+      }
       document.open();
-      document.IHTMLDocument2_write(format(GetContent(htmlLibraryPath), GetContent(jsLibraryPath)));
+      document.IHTMLDocument2_write(format(GetContent(htmlLibraryPath), jsLibraryPath));
       document.close();
       document.body.innerText = markdownContent;
       document.parentWindow.execScript('convertMarkdown()', 'javascript');
