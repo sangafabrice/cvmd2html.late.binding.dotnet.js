@@ -1,6 +1,6 @@
 /**
  * @file returns the method to convert from markdown to html.
- * @version 0.0.1.4
+ * @version 0.0.1.5
  */
 
 /**
@@ -19,10 +19,9 @@ var CreateConverter = (function() {
 
   /**
    * @param {string} htmlLibraryPath is the path string of the html loading the library.
-   * @param {string} jsLibraryPath is the javascript library path.
    * @returns {object} the Converter type.
    */
-  return function (htmlLibraryPath, jsLibraryPath) {
+  return function (htmlLibraryPath) {
     /** @class @constructs MarkdownToHtml */
     function MarkdownToHtml() { }
 
@@ -52,17 +51,20 @@ var CreateConverter = (function() {
         var document = Document.DomDocument;
       }
       document.open();
-      document.IHTMLDocument2_write(format(GetContent(htmlLibraryPath), jsLibraryPath));
+      document.IHTMLDocument2_write(GetContent(htmlLibraryPath));
       document.close();
-      document.body.innerText = markdownContent;
-      document.parentWindow.execScript('convertMarkdown()', 'javascript');
-      try {
-        return document.body.innerHTML;
-      } finally {
-        if (document) {
-          Marshal.FinalReleaseComObject(document);
-          document = null;
-        }
+      // Wait for the convertMarkdown method to load.
+      while (true) {
+        try {
+          document.body.innerText = markdownContent;
+          document.parentWindow.execScript('convertMarkdown()', 'javascript');
+          var htmlContent = document.body.innerHTML;
+          if (document) {
+            Marshal.FinalReleaseComObject(document);
+            document = null;
+          }
+          return htmlContent;
+        } catch (error) { }
       }
     }
 
