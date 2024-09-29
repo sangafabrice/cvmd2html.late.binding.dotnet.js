@@ -18,7 +18,7 @@ package cvmd2html {
   
     private static var _pwshExePath: String = Registry.GetValue('HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\pwsh.exe', null, null);
   
-    private static var _menuIconPath: String = Path.Combine(_resourcePath, 'menu.ico');
+    private static var _menuIconPath: String = Program.Path;
   
     /// <summary>The shortcut target powershell script path.</summary>
     static function get PwshScriptPath(): String {

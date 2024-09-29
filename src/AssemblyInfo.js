@@ -20,10 +20,3 @@ import System.ComponentModel;
 import System.Security.Principal;
 import Microsoft.Win32;
 import IWshRuntimeLibrary;
-
-[assembly: AssemblyProduct('CvMd2Html Shortcut')]
-[assembly: AssemblyInformationalVersion(@MAJOR + '.' + @MINOR + '.' + @BUILD + '.' + @REVISION)]
-[assembly: AssemblyCopyright('\u00A9 2024 sangafabrice')]
-[assembly: AssemblyCompany('sangafabrice')]
-[assembly: AssemblyVersion(@MAJOR + '.' + @MINOR + '.' + @BUILD + '.' + @REVISION)]
-[assembly: AssemblyTitle('CvMd2Html')]

@@ -7,9 +7,7 @@ package cvmd2html {
 
   abstract class Program {
 
-    static function Main(args: String[]): void {
-
-      RequestAdminPrivileges(args);
+    static function Main(): void {
 
       /** The application execution. */
       if (Param.Markdown) {
@@ -52,27 +50,6 @@ package cvmd2html {
     internal static function Quit(exitCode: int) {
       GC.Collect();
       Environment.Exit(exitCode);
-    }
-
-    /// <summary>Request administrator privileges if standard user.</summary>
-    /// <param name="args">The input arguments.</param>
-    private static function RequestAdminPrivileges(args: String[]) {
-      // Check if the current user is admin.
-      if ((new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator)) {
-        return;
-      }
-      var appStartInfo: ProcessStartInfo = new ProcessStartInfo(_assemblyLocation, String.Format('"{0}"', args.join('" "')));
-      appStartInfo.UseShellExecute = true;
-      appStartInfo.Verb = 'runas';
-      appStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-      try {
-        Process.Start(appStartInfo);
-      } catch (error: Win32Exception) {
-        Quit(0);
-      } catch (error: Exception) {
-        Quit(1);
-      }
-      Quit(0);
     }
 
     /// <summary>Execute the icon link.</summary>
