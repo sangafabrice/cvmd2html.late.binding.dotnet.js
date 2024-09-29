@@ -1,6 +1,6 @@
 /**
  * @file returns the methods for managing the shortcut menu option: install and uninstall.
- * @version 0.0.1
+ * @version 0.0.1.1
  */
 
 /**
@@ -28,7 +28,7 @@ var Setup = (function() {
       if (paramNoIcon) {
         registry.DeleteValue(HKCU, VERB_KEY, iconValueName);
       } else {
-        registry.SetStringValue(HKCU, VERB_KEY, iconValueName, menuIconPath);
+        registry.SetStringValue(HKCU, VERB_KEY, iconValueName, AssemblyLocation);
       }
     },
     /** Remove the shortcut menu by removing the verb key and subkeys. */
