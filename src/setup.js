@@ -1,6 +1,6 @@
 /**
  * @file returns the methods for managing the shortcut menu option: install and uninstall.
- * @version 0.0.1
+ * @version 0.0.1.1
  */
 
 /**
