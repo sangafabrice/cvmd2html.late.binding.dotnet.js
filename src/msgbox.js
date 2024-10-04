@@ -1,6 +1,6 @@
 /**
  * @file returns the markdown conversion message box.
- * @version 0.0.1
+ * @version 0.0.1.1
  */
 
 /**
@@ -38,10 +38,10 @@ var MessageBox = (function() {
     // The error message box shows the OK button alone.
     // The warning message box shows the alternative Yes or No buttons.
     messageType += messageType == MsgBoxStyle.Critical ? MsgBoxStyle.OkOnly:MsgBoxStyle.YesNo;
-    try {
-      var INCLUDE_DIALOGRESULT_MATCH = true;
-      return Strings.Trim(Strings.Filter(String[]([format(' {0} ', Constants.vbYes), format(' {0} ', Constants.vbNo)]), format(' {0} ', Interaction.MsgBox(String(message), messageType, MESSAGE_BOX_TITLE)), INCLUDE_DIALOGRESULT_MATCH, CompareMethod.Text)[0]);
-    } catch (error) { }
+    var INCLUDE_DIALOGRESULT_MATCH = true;
+    if (Strings.Filter(String[]([format(' {0} ', MsgBoxResult.Ok), format(' {0} ', MsgBoxResult.No)]), format(' {0} ', Interaction.MsgBox(String(message), messageType, MESSAGE_BOX_TITLE)), INCLUDE_DIALOGRESULT_MATCH, CompareMethod.Text).length > 0) {
+      quit(1);
+    }
   }
 
   return MessageBox;

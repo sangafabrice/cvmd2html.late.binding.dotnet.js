@@ -37,8 +37,6 @@ function format(formatStr, args) {
  */
 function quit(exitCode) {
   Marshal.FinalReleaseComObject(StdRegProv);
-  Marshal.FinalReleaseComObject(WshShell);
-  WshShell = null;
   StdRegProv = null;
   GC.Collect();
   Environment.Exit(exitCode);

@@ -1,4 +1,4 @@
-<#PSScriptInfo .VERSION 0.0.1.2#>
+<#PSScriptInfo .VERSION 0.0.1.3#>
 
 #Requires -Version 6.1
 using namespace System.IO
@@ -26,7 +26,6 @@ Param ()
   }
   New-Item $BinDir -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
   Copy-Item "$PSScriptRoot\rsc" -Destination $BinDir -Recurse
-  Copy-Item "$PSScriptRoot\cvmd2html.psd1" -Destination $BinDir
   
   $SrcDir = "$PSScriptRoot\src"
 
@@ -35,7 +34,7 @@ Param ()
   # Compile the source code with jsc.exe.
   $EnvPath = $Env:Path
   $Env:Path = "$Env:windir\Microsoft.NET\Framework$(If ([Environment]::Is64BitOperatingSystem) { '64' })\v4.0.30319\;$Env:Path"
-  jsc.exe /nologo /target:$($DebugPreference -eq 'Continue' ? 'exe':'winexe') /win32res:$ResFile /out:$(($ConvertExe = "$BinDir\cvmd2html.exe")) "$SrcDir\AssemblyInfo.js" "$SrcDir\conhost.js" "$SrcDir\msgbox.js" "$SrcDir\package.js" "$SrcDir\parameters.js" "$PSScriptRoot\index.js" "$SrcDir\setup.js" "$SrcDir\utils.js"
+  jsc.exe /nologo /target:$($DebugPreference -eq 'Continue' ? 'exe':'winexe') /win32res:$ResFile /out:$(($ConvertExe = "$BinDir\cvmd2html.exe")) "$SrcDir\AssemblyInfo.js" "$SrcDir\converter.js" "$SrcDir\msgbox.js" "$SrcDir\package.js" "$SrcDir\parameters.js" "$PSScriptRoot\index.js" "$SrcDir\setup.js" "$SrcDir\utils.js"
   $Env:Path = $EnvPath
   
   If ($LASTEXITCODE -eq 0) {

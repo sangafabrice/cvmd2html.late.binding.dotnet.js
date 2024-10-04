@@ -7,7 +7,5 @@ import Microsoft.VisualBasic;
 
 var AssemblyLocation = Assembly.GetExecutingAssembly().Location;
 
-/** @typedef {object} WshShell */
-var WshShell = Interaction.CreateObject('WScript.Shell');
 /** @typedef {object} StdRegProv */
 var StdRegProv = Interaction.GetObject('winmgmts:StdRegProv');
