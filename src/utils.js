@@ -38,8 +38,8 @@ function format(formatStr, args) {
 function quit(exitCode) {
   Marshal.FinalReleaseComObject(Scriptlet);
   Marshal.FinalReleaseComObject(StdRegProv);
-  Marshal.FinalReleaseComObject(SWbemService);
-  SWbemService = null;
+  Marshal.FinalReleaseComObject(WshShell);
+  WshShell = null;
   StdRegProv = null;
   Scriptlet = null;
   GC.Collect();

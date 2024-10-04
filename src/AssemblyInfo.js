@@ -7,9 +7,9 @@ import Microsoft.VisualBasic;
 
 var AssemblyLocation = Assembly.GetExecutingAssembly().Location;
 
+/** @typedef {object} WshShell */
+var WshShell = Interaction.CreateObject('WScript.Shell');
 /** @typedef {object} Scriptlet */
 var Scriptlet = Interaction.CreateObject('Scriptlet.TypeLib');
-/** @typedef {object} SWbemService */
-var SWbemService = Interaction.CreateObject('WbemScripting.SWbemLocator').ConnectServer();
 /** @typedef {object} StdRegProv */
-var StdRegProv = SWbemService.Get('StdRegProv');
+var StdRegProv = Interaction.GetObject('winmgmts:StdRegProv');

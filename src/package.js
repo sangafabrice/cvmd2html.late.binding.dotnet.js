@@ -25,20 +25,7 @@ var Package = (function() {
   resource.ResourcePath = FileSystem.CombinePath(resource.Root, 'rsc');
   resource.PwshScriptPath = FileSystem.CombinePath(resource.ResourcePath, 'cvmd2html.ps1');
   resource.MenuIconPath = AssemblyLocation;
-  resource.PwshExePath = (function() {
-    var getStringValueMethod = StdRegProv.Methods_.Item('GetStringValue');
-    var inParam = getStringValueMethod.InParameters.SpawnInstance_();
-    // The HKLM registry subkey stores the PowerShell Core application path.
-    inParam.sSubKeyName = 'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\pwsh.exe';
-    try {
-      return StdRegProv.ExecMethod_(getStringValueMethod.Name, inParam).sValue;
-    } finally {
-      Marshal.FinalReleaseComObject(getStringValueMethod);
-      Marshal.FinalReleaseComObject(inParam);
-      inParam = null;
-      getStringValueMethod = null;
-    }
-  })();
+  resource.PwshExePath = WshShell.RegRead('HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\pwsh.exe\\');
   resource.IconLink = {
     DirName: Interaction.Environ('TEMP'),
     Name: Scriptlet.Guid.substr(1, 36).toLowerCase() + '.tmp.lnk',
@@ -48,11 +35,10 @@ var Package = (function() {
      * @param {string} markdownPath is the input markdown file path.
      */
     Create: function (markdownPath) {
-      Interaction.CreateObject('Scripting.FileSystemObject').CreateTextFile(this.Path).Close();
-      var link = Interaction.CreateObject('Shell.Application').NameSpace(this.DirName).ParseName(this.Name).GetLink;
-      link.Path = resource.PwshExePath;
+      var link = WshShell.CreateShortcut(this.Path);
+      link.TargetPath = resource.PwshExePath;
       link.Arguments = format('-ep Bypass -nop -w Hidden -f "{0}" -Markdown "{1}"', [resource.PwshScriptPath, markdownPath]);
-      link.SetIconLocation(resource.MenuIconPath, 0);
+      link.IconLocation = resource.MenuIconPath;
       link.Save();
       Marshal.FinalReleaseComObject(link);
       link = null;
