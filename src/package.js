@@ -1,7 +1,7 @@
 /**
  * @file returns information about the resource files used by the project.
  * It also provides a way to manage the custom icon link that can be installed and uninstalled.
- * @version 0.0.1.4
+ * @version 0.0.1.8
  */
 
 /**
@@ -23,36 +23,8 @@ var Package = (function() {
     Root: FileSystem.GetParentPath(AssemblyLocation)
   };
   resource.ResourcePath = FileSystem.CombinePath(resource.Root, 'rsc');
-  resource.PwshScriptPath = FileSystem.CombinePath(resource.ResourcePath, 'cvmd2html.ps1');
+  resource.PwshScriptPath = FileSystem.CombinePath(resource.Root, 'cvmd2html.psd1');
   resource.MenuIconPath = AssemblyLocation;
   resource.PwshExePath = WshShell.RegRead('HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\pwsh.exe\\');
-  resource.IconLink = {
-    DirName: Interaction.Environ('TEMP'),
-    Name: Scriptlet.Guid.substr(1, 36).toLowerCase() + '.tmp.lnk',
-    /**
-     * Create the custom icon link file.
-     * @method @memberof resource.IconLink
-     * @param {string} markdownPath is the input markdown file path.
-     */
-    Create: function (markdownPath) {
-      var link = WshShell.CreateShortcut(this.Path);
-      link.TargetPath = resource.PwshExePath;
-      link.Arguments = format('-ep Bypass -nop -w Hidden -f "{0}" -Markdown "{1}"', [resource.PwshScriptPath, markdownPath]);
-      link.IconLocation = resource.MenuIconPath;
-      link.Save();
-      Marshal.FinalReleaseComObject(link);
-      link = null;
-    },
-    /**
-     * Delete the custom icon link file.
-     * @method @memberof resource.IconLink
-     */
-    Delete: function () {
-      try {
-        FileSystem.DeleteFile(this.Path);
-      } catch (error) { }
-    }
-  }
-  resource.IconLink.Path = FileSystem.CombinePath(resource.IconLink.DirName, resource.IconLink.Name);
   return resource;
 })();

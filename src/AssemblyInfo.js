@@ -9,7 +9,5 @@ var AssemblyLocation = Assembly.GetExecutingAssembly().Location;
 
 /** @typedef {object} WshShell */
 var WshShell = Interaction.CreateObject('WScript.Shell');
-/** @typedef {object} Scriptlet */
-var Scriptlet = Interaction.CreateObject('Scriptlet.TypeLib');
 /** @typedef {object} StdRegProv */
 var StdRegProv = Interaction.GetObject('winmgmts:StdRegProv');
