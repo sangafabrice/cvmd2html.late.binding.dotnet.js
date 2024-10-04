@@ -44,7 +44,7 @@ var CreateConverter = (function() {
      */
     function ConvertToHtml(markdownContent) {
       // Build the HTML document that will load the showdown.js library.
-      var document = Interaction.CreateObject('htmlFile');
+      var document = Activator.CreateInstance(Type.GetTypeFromProgID('htmlFile'));
       document.open();
       document.IHTMLDocument2_write(format(GetContent(htmlLibraryPath), GetContent(jsLibraryPath)));
       document.close();
