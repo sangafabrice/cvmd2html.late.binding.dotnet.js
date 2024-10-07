@@ -16,7 +16,7 @@ package cvmd2html {
   
     private static var _pwshScriptPath: String = Path.Combine(_resourcePath, 'cvmd2html.ps1');
   
-    private static var _pwshExePath: String = StdRegProv.GetStringValue(null, 'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\pwsh.exe', null);
+    private static var _pwshExePath: String = Registry.GetValue('HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\pwsh.exe', null, null);
   
     private static var _menuIconPath: String = Path.Combine(_resourcePath, 'menu.ico');
   

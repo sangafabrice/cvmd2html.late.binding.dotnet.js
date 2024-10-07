@@ -57,8 +57,8 @@ package cvmd2html {
     /// <summary>Request administrator privileges if standard user.</summary>
     /// <param name="args">The input arguments.</param>
     private static function RequestAdminPrivileges(args: String[]) {
-      var HKU: uint = 0x80000003;
-      if (StdRegProv.CheckAccess(HKU, 'S-1-5-19\\Environment')) {
+      // Check if the current user is admin.
+      if ((new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator)) {
         return;
       }
       var appStartInfo: ProcessStartInfo = new ProcessStartInfo(_assemblyLocation, String.Format('"{0}"', args.join('" "')));

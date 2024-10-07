@@ -8,7 +8,6 @@
 import System.Reflection;
 import System.Management;
 import System.Diagnostics;
-@if (!@StdRegProvWim)
 import cvmd2html;
 import Microsoft.JScript;
 import System;
@@ -18,17 +17,13 @@ import System.Drawing;
 import System.Windows.Forms;
 import System.Runtime.InteropServices;
 import System.ComponentModel;
+import System.Security.Principal;
+import Microsoft.Win32;
 import IWshRuntimeLibrary;
-import ROOT.CIMV2;
-@end
 
 [assembly: AssemblyProduct('CvMd2Html Shortcut')]
 [assembly: AssemblyInformationalVersion(@MAJOR + '.' + @MINOR + '.' + @BUILD + '.' + @REVISION)]
 [assembly: AssemblyCopyright('\u00A9 2024 sangafabrice')]
 [assembly: AssemblyCompany('sangafabrice')]
 [assembly: AssemblyVersion(@MAJOR + '.' + @MINOR + '.' + @BUILD + '.' + @REVISION)]
-@if (@StdRegProvWim)
-[assembly: AssemblyTitle('StdRegProv')]
-@else
 [assembly: AssemblyTitle('CvMd2Html')]
-@end
