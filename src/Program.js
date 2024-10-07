@@ -59,16 +59,10 @@ package cvmd2html {
     private static function RunIconLink(iconLinkPath: String, errorLogPath: String): uint {
       var appStartInfo: ProcessStartInfo = new ProcessStartInfo('C:\\Windows\\System32\\cmd.exe', String.Format('/d /c ""{0}" 2> "{1}""', iconLinkPath, errorLogPath));
       appStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-      return WaitForExit(Process.Start(appStartInfo).Id);
-    }
-
-    /// <summary>Wait for the cmd process exit.</summary>
-    /// <param name="ProcessId">The process identifier.</param>
-    /// <returns>The exit status.</returns>
-    private static function WaitForExit(ProcessId: int): uint {
-      // The process termination event query.
-      var wmiQuery: String = 'SELECT * FROM Win32_ProcessStopTrace WHERE ProcessName="cmd.exe" AND ProcessId=' + ProcessId;
-      return (new ManagementEventWatcher(wmiQuery)).WaitForNextEvent().Properties['ExitStatus'].Value;
+      with (Process.Start(appStartInfo)) {
+        WaitForExit();
+        return ExitCode;
+      }
     }
   }
 }
